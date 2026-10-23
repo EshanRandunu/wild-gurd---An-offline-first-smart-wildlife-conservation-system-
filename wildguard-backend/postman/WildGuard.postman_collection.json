@@ -1,0 +1,43 @@
+{
+  "info": {
+    "name": "WildGuard Backend API",
+    "description": "Importable examples for all backend routes. Set baseUrl and token collection variables.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    { "key": "baseUrl", "value": "http://localhost:8080" },
+    { "key": "token", "value": "" },
+    { "key": "reportId", "value": "report-demo-001" }
+  ],
+  "item": [
+    { "name": "Authentication", "item": [
+      { "name": "Register villager", "request": { "method": "POST", "header": [{ "key": "Content-Type", "value": "application/json" }], "url": "{{baseUrl}}/api/auth/register", "body": { "mode": "raw", "raw": "{\n  \"username\": \"villager1\",\n  \"email\": \"villager@example.com\",\n  \"password\": \"secret123\",\n  \"fullName\": \"Example Villager\",\n  \"phoneNumber\": \"+94000000000\",\n  \"role\": \"VILLAGER\"\n}", "options": { "raw": { "language": "json" } } } } },
+      { "name": "Login", "request": { "method": "POST", "header": [{ "key": "Content-Type", "value": "application/json" }], "url": "{{baseUrl}}/api/auth/login", "body": { "mode": "raw", "raw": "{\n  \"username\": \"villager1\",\n  \"password\": \"secret123\"\n}", "options": { "raw": { "language": "json" } } } } },
+      { "name": "Next badge", "request": { "method": "GET", "url": "{{baseUrl}}/api/auth/next-badge?role=RANGER" } }
+    ] },
+    { "name": "Profiles", "item": [
+      { "name": "Ranger profile", "request": { "method": "GET", "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }], "url": "{{baseUrl}}/api/rangers/me" } },
+      { "name": "Get my profile", "request": { "method": "GET", "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }], "url": "{{baseUrl}}/api/rangers/profile" } },
+      { "name": "Edit my profile", "request": { "method": "PUT", "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }, { "key": "Content-Type", "value": "application/json" }], "url": "{{baseUrl}}/api/rangers/profile", "body": { "mode": "raw", "raw": "{\n  \"fullName\": \"Updated Name\",\n  \"email\": \"updated@example.com\",\n  \"phoneNumber\": \"+94000000000\",\n  \"assignedPark\": \"North Reserve\"\n}", "options": { "raw": { "language": "json" } } } } }
+    ] },
+    { "name": "Community Reports and Alerts", "item": [
+      { "name": "List reports", "request": { "method": "GET", "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }], "url": "{{baseUrl}}/api/v1/community-reports" } },
+      { "name": "Submit normal SMS report (public, no token)", "request": { "method": "POST", "header": [{ "key": "Content-Type", "value": "application/json" }], "url": "{{baseUrl}}/api/v1/community-reports/sms", "body": { "mode": "raw", "raw": "{\n  \"senderPhone\": \"+94000000000\",\n  \"message\": \"WILDLIFE | North village | Elephant seen near the school\"\n}", "options": { "raw": { "language": "json" } } } } },
+      { "name": "Submit app report", "request": { "method": "POST", "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }, { "key": "Content-Type", "value": "application/json" }], "url": "{{baseUrl}}/api/v1/community-reports", "body": { "mode": "raw", "raw": "{\n  \"id\": \"{{reportId}}\",\n  \"reporterName\": \"Example Villager\",\n  \"reporterPhone\": \"+94000000000\",\n  \"type\": \"ELEPHANT\",\n  \"description\": \"Elephant near homes\",\n  \"zone\": \"North village\",\n  \"channel\": \"MOBILE_APP\",\n  \"latitude\": 7.95,\n  \"longitude\": 80.75,\n  \"severity\": \"HIGH\",\n  \"status\": \"UNVERIFIED\",\n  \"createdAt\": \"2026-10-11T08:00:00Z\",\n  \"photoBase64\": null\n}", "options": { "raw": { "language": "json" } } } } },
+      { "name": "Update report status", "request": { "method": "PATCH", "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }, { "key": "Content-Type", "value": "application/json" }], "url": "{{baseUrl}}/api/v1/community-reports/{{reportId}}/status", "body": { "mode": "raw", "raw": "{\n  \"status\": \"VERIFIED\",\n  \"cloNotes\": \"Checked with village contact\"\n}", "options": { "raw": { "language": "json" } } } } },
+      { "name": "Dispatch report", "request": { "method": "PUT", "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }, { "key": "Content-Type", "value": "application/json" }], "url": "{{baseUrl}}/api/v1/community-reports/{{reportId}}/dispatch", "body": { "mode": "raw", "raw": "{\n  \"rangerUnit\": \"Alpha Unit - Rapid Response\",\n  \"dispatchPriority\": \"P1 - Immediate\",\n  \"dispatchInstructions\": \"Check north village edge\"\n}", "options": { "raw": { "language": "json" } } } } },
+      { "name": "Publish report alert", "request": { "method": "POST", "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }, { "key": "Content-Type", "value": "application/json" }], "url": "{{baseUrl}}/api/v1/community-reports/{{reportId}}/publish-alert", "body": { "mode": "raw", "raw": "{\n  \"title\": \"Wildlife nearby\",\n  \"severity\": \"HIGH\",\n  \"zone\": \"North village\",\n  \"advisory\": \"Keep a safe distance\",\n  \"latitude\": 7.95,\n  \"longitude\": 80.75\n}", "options": { "raw": { "language": "json" } } } } },
+      { "name": "List alerts", "request": { "method": "GET", "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }], "url": "{{baseUrl}}/api/v1/community-reports/alerts" } },
+      { "name": "Broadcast alert", "request": { "method": "POST", "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }, { "key": "Content-Type", "value": "application/json" }], "url": "{{baseUrl}}/api/v1/community-reports/alerts", "body": { "mode": "raw", "raw": "{\n  \"id\": \"alert-demo-001\",\n  \"title\": \"Community safety alert\",\n  \"severity\": \"HIGH\",\n  \"zone\": \"North village\",\n  \"advisory\": \"Keep a safe distance\",\n  \"latitude\": 7.95,\n  \"longitude\": 80.75\n}", "options": { "raw": { "language": "json" } } } } }
+    ] },
+    { "name": "Incidents", "item": [
+      { "name": "Sync one incident", "request": { "method": "POST", "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }, { "key": "Content-Type", "value": "application/json" }], "url": "{{baseUrl}}/api/incidents/sync", "body": { "mode": "raw", "raw": "{\n  \"localIncidentId\": \"local-001\",\n  \"type\": \"SNARE\",\n  \"severity\": \"HIGH\",\n  \"description\": \"Snare found near trail\",\n  \"latitude\": 7.95,\n  \"longitude\": 80.75,\n  \"photoBase64\": null,\n  \"timestamp\": \"2026-10-11T08:00:00Z\"\n}", "options": { "raw": { "language": "json" } } } } },
+      { "name": "Sync incident batch", "request": { "method": "POST", "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }, { "key": "Content-Type", "value": "application/json" }], "url": "{{baseUrl}}/api/incidents/sync/batch", "body": { "mode": "raw", "raw": "{\n  \"incidents\": [{\n    \"localIncidentId\": \"local-001\",\n    \"type\": \"SNARE\",\n    \"severity\": \"HIGH\",\n    \"description\": \"Snare found\",\n    \"latitude\": 7.95,\n    \"longitude\": 80.75,\n    \"timestamp\": \"2026-10-11T08:00:00Z\"\n  }]\n}", "options": { "raw": { "language": "json" } } } } },
+      { "name": "My incident history", "request": { "method": "GET", "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }], "url": "{{baseUrl}}/api/incidents/my-history" } }
+    ] },
+    { "name": "Manager Analytics", "item": [
+      { "name": "Dashboard", "request": { "method": "GET", "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }], "url": "{{baseUrl}}/api/analytics/dashboard?from=2026-10-01&to=2026-10-11&tz=Asia%2FColombo" } },
+      { "name": "CSV export", "request": { "method": "GET", "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }], "url": "{{baseUrl}}/api/analytics/export?from=2026-10-01&to=2026-10-11&tz=Asia%2FColombo" } }
+    ] }
+  ]
+}
